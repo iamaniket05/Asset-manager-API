@@ -1,13 +1,12 @@
 const pool = require('../config/db');
 
-const DepartmentModel = {
-  // Create new department
-  async createDepartment(name) {
+const DesignationModel = {
+  // Create new designation
+  async createDesignation(name) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.insert('departments', {
+      const result = await qb.insert('designations', {
         name
-        
       });
       qb.release();
       return result;
@@ -17,11 +16,11 @@ const DepartmentModel = {
     }
   },
 
-  // Get all departments
-  async getAllDepartments() {
+  // Get all designations
+  async getAllDesignations() {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.select('*').get('departments');
+      const result = await qb.select('*').get('designations');
       qb.release();
       return result;
     } catch (err) {
@@ -30,11 +29,11 @@ const DepartmentModel = {
     }
   },
 
-  // Get department by ID
-  async getDepartmentById(id) {
+  // Get designation by ID
+  async getDesignationById(id) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.select('*').where({ id }).get('departments');
+      const result = await qb.select('*').where({ id }).get('designations');
       qb.release();
       return result && result.length > 0 ? result[0] : null;
     } catch (err) {
@@ -43,12 +42,15 @@ const DepartmentModel = {
     }
   },
 
-  // Update department by ID
-  async updateDepartment(id, name) {
+  // Update designation by ID
+  async updateDesignation(id, name, status) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb
-        .update('departments', { name }, { id });
+      const result = await qb.update(
+        'designations',
+        { name, status },
+        { id }
+      );
       qb.release();
       return result;
     } catch (err) {
@@ -57,11 +59,11 @@ const DepartmentModel = {
     }
   },
 
-  // Delete department by ID
-  async deleteDepartment(id) {
+  // Delete designation by ID
+  async deleteDesignation(id) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.delete('departments', { id });
+      const result = await qb.delete('designations', { id });
       qb.release();
       return result;
     } catch (err) {
@@ -71,4 +73,4 @@ const DepartmentModel = {
   }
 };
 
-module.exports = DepartmentModel;
+module.exports = DesignationModel;

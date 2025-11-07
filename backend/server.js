@@ -1,4 +1,5 @@
-require('dotenv').config();
+//require('dotenv').config();
+require('dotenv').config({ path: './backend/.env' });
 const http = require('http');
 
 const hostname = process.env.HOSTNAME

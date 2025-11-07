@@ -14,10 +14,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const adminRoutes = require('./routes/admin_routes');
 const departmentRoutes = require('./routes/department_routes');
+const designationRoutes = require('./routes/designation_routes');
+
 
 // register routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/department', departmentRoutes);
+app.use('/api/designation', designationRoutes);
+
 
 
 module.exports = app;

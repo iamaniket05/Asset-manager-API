@@ -4,13 +4,13 @@ const departmentController = {
   // Create department
   async create(req, res) {
     try {
-      const { department_name, status } = req.body;
+      const {name } = req.body;
 
-      if (!department_name || !status) {
-        return res.status(400).json({ error: "department_name and status are required" });
+      if (!name) {
+        return res.status(400).json({ error: "name is required" });
       }
 
-      const result = await DepartmentModel.createDepartment(department_name, status);
+      const result = await DepartmentModel.createDepartment(name);
       return res.json({ success: true, message: "Department created successfully", result });
     } catch (err) {
       return res.status(500).json({ error: err.message });
