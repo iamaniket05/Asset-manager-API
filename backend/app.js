@@ -15,10 +15,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const adminRoutes = require('./routes/admin_routes');
 const departmentRoutes = require('./routes/department_routes');
 const designationRoutes = require('./routes/designation_routes');
+const assetRoutes = require('./routes/asset_routes');
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/department', departmentRoutes);
 app.use('/api/designation', designationRoutes);
-
+app.use('/api/asset', assetRoutes);
 
 module.exports = app;
