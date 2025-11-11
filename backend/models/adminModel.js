@@ -1,8 +1,8 @@
 const pool = require('../config/db');
-
+ 
 const AdminModel = {
   async createAdmin(data) {
-    const qb = await pool.get_connection(); 
+    const qb = await pool.get_connection();
     try {
       const result = await qb.insert('users', {
         name: data.name,
@@ -13,15 +13,15 @@ const AdminModel = {
         country_code: data.country_code || null,
         phone_number: data.phone_number || null,
       });
-
-      qb.release(); 
+ 
+      qb.release();
       return result;
     } catch (err) {
       qb.release();
       throw err;
     }
   },
-
+ 
   async findAdminByEmail(email) {
     const qb = await pool.get_connection();
     try {
@@ -33,8 +33,8 @@ const AdminModel = {
       throw err;
     }
   },
-
-  async getAllAdmins() {
+ 
+  /*async getAllAdmins() {
     const qb = await pool.get_connection();
     try {
       const result = await qb.select('*').get('users');
@@ -44,8 +44,37 @@ const AdminModel = {
       qb.release();
       throw err;
     }
-  },
+  },*/
 
+  async getAllAdmins() {
+    const qb = await pool.get_connection();
+   
+    try {
+      // Select columns
+      qb.select(
+        'u.id, u.name, u.email, u.designation_id, d.name AS designation_name, ' +
+        'u.department_id, dep.name AS department_name, ' +
+        'u.country_code, u.phone_number'
+      );
+   
+      // From main table
+      qb.from('users u');
+   
+      // Left joins
+      qb.join('designations d', 'u.designation_id = d.id', 'left');
+      qb.join('departments dep', 'u.department_id = dep.id', 'left');
+   
+      // Execute the query
+      const result = await qb.get();
+   
+      qb.release();
+      return result;
+    } catch (err) {
+      qb.release();
+      throw err;
+    }
+  },
+ 
   async getAdminById(id) {
     const qb = await pool.get_connection();
     try {
@@ -57,7 +86,7 @@ const AdminModel = {
       throw err;
     }
   },
-
+ 
   async updateAdmin(id, data) {
     const qb = await pool.get_connection();
     try {
@@ -69,7 +98,7 @@ const AdminModel = {
       throw err;
     }
   },
-
+ 
   async deleteAdmin(id) {
     const qb = await pool.get_connection();
     try {
@@ -82,5 +111,5 @@ const AdminModel = {
     }
   }
 };
-
+ 
 module.exports = AdminModel;
