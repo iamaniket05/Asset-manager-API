@@ -16,10 +16,12 @@ const adminRoutes = require('./routes/admin_routes');
 const departmentRoutes = require('./routes/department_routes');
 const designationRoutes = require('./routes/designation_routes');
 const assetRoutes = require('./routes/asset_routes');
+const decryptRoutes = require('./routes/decryptRoutes');
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/department', departmentRoutes);
 app.use('/api/designation', designationRoutes);
 app.use('/api/asset', assetRoutes);
+app.use('/api/decrypt', decryptRoutes);
 
 module.exports = app;

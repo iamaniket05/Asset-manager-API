@@ -1,13 +1,24 @@
 const pool = require('../config/db');
-
+ 
 const DesignationModel = {
+  // Check if name exists
+  async findByName(name) {
+    const qb = await pool.get_connection();
+    try {
+      const result = await qb.select('*').where({ name }).get('designations');
+      qb.release();
+      return result && result.length > 0 ? result[0] : null;
+    } catch (err) {
+      qb.release();
+      throw err;
+    }
+  },
+ 
   // Create new designation
   async createDesignation(name) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.insert('designations', {
-        name
-      });
+      const result = await qb.insert('designations', { name });
       qb.release();
       return result;
     } catch (err) {
@@ -15,7 +26,7 @@ const DesignationModel = {
       throw err;
     }
   },
-
+ 
   // Get all designations
   async getAllDesignations() {
     const qb = await pool.get_connection();
@@ -28,7 +39,7 @@ const DesignationModel = {
       throw err;
     }
   },
-
+ 
   // Get designation by ID
   async getDesignationById(id) {
     const qb = await pool.get_connection();
@@ -41,16 +52,12 @@ const DesignationModel = {
       throw err;
     }
   },
-
+ 
   // Update designation by ID
   async updateDesignation(id, name, status) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.update(
-        'designations',
-        { name, status },
-        { id }
-      );
+      const result = await qb.update('designations', { name, status }, { id });
       qb.release();
       return result;
     } catch (err) {
@@ -58,7 +65,7 @@ const DesignationModel = {
       throw err;
     }
   },
-
+ 
   // Delete designation by ID
   async deleteDesignation(id) {
     const qb = await pool.get_connection();
@@ -72,5 +79,5 @@ const DesignationModel = {
     }
   }
 };
-
+ 
 module.exports = DesignationModel;

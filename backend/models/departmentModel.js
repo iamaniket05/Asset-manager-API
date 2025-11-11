@@ -1,6 +1,19 @@
 const pool = require('../config/db');
 
 const DepartmentModel = {
+
+  async findByName(name) {
+    const qb = await pool.get_connection();
+    try {
+      const result = await qb.select('*').where({ name }).get('departments');
+      qb.release();
+      return result && result.length > 0 ? result[0] : null;
+    } catch (err) {
+      qb.release();
+      throw err;
+    }
+  },
+
   // Create new department
   async createDepartment(name) {
     const qb = await pool.get_connection();
