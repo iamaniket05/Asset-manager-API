@@ -1,23 +1,31 @@
-const express = require('express');
-const router = express.Router();
-const adminController = require('../controllers/adminController');
-const header = require('../utilities/header');
-const token= require('../utilities/token');
-const validator= require('../utilities/validation/validator');
+let express = require('express');
+let router = express.Router();
 
-router.post('/register', header.checkHeader,adminController.register);
-router.post('/login',  header.checkHeader, adminController.login);
+let adminController = require('../controllers/adminController');
+let header = require('../utilities/header');
 
-//New API for admin list
-router.get('/list', header.checkHeader, adminController.getAllAdmins);
 
-// Get admin by ID
-router.get('/get/:id', header.checkHeader, adminController.getAdminById);
+// Admin Routes (Standard Style)
 
-// Update admin
-router.put('/update/:id', header.checkHeader, adminController.updateAdmin);
 
-// Delete admin
-router.delete('/delete/:id', header.checkHeader, adminController.deleteAdmin);
+//  Register admin
+router.post('/register', header.checkHeader, adminController.register);
+
+//  Login admin
+router.post('/login', header.checkHeader, adminController.login);
+
+//  List all admins
+router.get('/getAllAdmins', header.checkHeader, adminController.getAllAdmins);
+
+//  Get admin by ID
+router.get('/:id', header.checkHeader, adminController.getAdminById);
+
+//  Update admin by ID
+router.put('/update/:id', header.checkHeader, adminController.update);
+
+//  Delete admin by ID
+router.delete('/delete/:id', header.checkHeader, adminController.delete);
+
+router.post('/', header.checkHeader, adminController.decryptFields);
 
 module.exports = router;
