@@ -26,6 +26,5 @@ router.put('/update/:id', header.checkHeader, adminController.update);
 //  Delete admin by ID
 router.delete('/delete/:id', header.checkHeader, adminController.delete);
 
-router.post('/', header.checkHeader, adminController.decryptFields);
 
 module.exports = router;
