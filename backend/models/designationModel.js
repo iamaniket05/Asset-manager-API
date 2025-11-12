@@ -14,7 +14,7 @@ const DesignationModel = {
     }
   },
  
-  // Create new designation
+  // Create new designation  
   async createDesignation(name) {
     const qb = await pool.get_connection();
     try {
