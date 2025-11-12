@@ -31,7 +31,11 @@ const DesignationModel = {
   async getAllDesignations() {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.select('*').get('designations');
+      const result = await qb
+      .select('*')
+      .from('designations')
+      .order_by('id', 'DESC')
+      .get();
       qb.release();
       return result;
     } catch (err) {
