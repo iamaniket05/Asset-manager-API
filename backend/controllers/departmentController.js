@@ -1,52 +1,37 @@
 const DepartmentModel = require('../models/departmentModel');
 const encrypt_decrypt = require('../utilities/encrypt_decrypt');
+let response = require('../utilities/response'); // 
 
 const departmentController = {
-  // Create department
-  /*async create(req, res) {
-    try {
-      const { name } = req.body;
 
-      if (!name) {
-        return res.status(400).json({ error: "name is required" });
-      }
-
-      const result = await DepartmentModel.createDepartment(name);
-      return res.json({ success: true, message: "Department created successfully", result });
-    } catch (err) {
-      return res.status(500).json({ error: err.message });
-    }
-  },*/
-
+  // ✅ Create department
   async create(req, res) {
     try {
       const { name } = req.body;
- 
+
       if (!name) {
-        return res.status(400).json({ error: "name is required" });
+        return res.status(400).send(response.failed("Name is required"));
       }
- 
-       const existing = await DepartmentModel.findByName(name);
-       
-       if (existing) {
-        return res.status(200).send(response.failed('Department already exists'));
-    }
- 
+
+      const existing = await DepartmentModel.findByName(name);
+      if (existing) {
+        return res.status(200).send(response.failed("Department already exists"));
+      }
+
       const result = await DepartmentModel.createDepartment(name);
-      return res.json({ success: true, message: "Department created successfully", result });
-    }  catch (error) {
+      return res.status(201).send(response.successData(result, "Department created successfully"));
+    } catch (error) {
       console.log(error);
       return res.status(500).send(response.failed(error.message));
-  }
+    }
   },
-  
 
-  //  Get all departments (Encrypt IDs only for list API)
+  //  Get all departments (Encrypt IDs)
   async getAll(req, res) {
     try {
       const result = await DepartmentModel.getAllDepartments();
 
-      // Encrypt the ID for each record before sending
+      // 📝 NOTE: Encrypt ID before sending
       const encryptedResult = result.map(department => ({
         id: encrypt_decrypt.encrypt(department.id),
         name: department.name,
@@ -54,59 +39,67 @@ const departmentController = {
         created_at: department.created_at
       }));
 
-      return res.json({ success: true, data: encryptedResult });
+      return res.status(200).send(response.successData(encryptedResult, "Department list fetched successfully"));
     } catch (err) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).send(response.failed(err.message));
     }
   },
 
-  // Get department by ID (no encryption/decryption)
+  //  Get department by ID
   async getById(req, res) {
     try {
-      const { id } = req.params;
+      const encryptedId = req.params.id;
+      const id = encrypt_decrypt.decrypt(encryptedId);
       const result = await DepartmentModel.getDepartmentById(id);
 
       if (!result) {
-        return res.status(404).json({ error: "Department not found" });
+        return res.status(404).send(response.failed("Department not found"));
       }
 
-      return res.json({ success: true, data: result });
+      const responseData = {
+        id: encryptedId,
+        name: result.name,
+        status: result.status,
+      };
+
+      return res.status(200).send(response.successData(responseData, "Department fetched successfully"));
     } catch (err) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).send(response.failed(err.message));
     }
   },
 
-  // Update department
+  //  Update department
   async update(req, res) {
     try {
-      const { id } = req.params;
+      const encryptedId = req.params.id || req.body.id;
+      const id = encrypt_decrypt.decrypt(encryptedId);
       const { name, status } = req.body;
 
       if (!name || !status) {
-        return res.status(400).json({ error: "name and status are required" });
+        return res.status(400).send(response.failed("Name and status are required"));
       }
 
       const existing = await DepartmentModel.findByName(name);
       if (existing && existing.id != id) {
-        return res.status(200).send(response.failed('Department already exists'));
+        return res.status(200).send(response.failed("Department already exists"));
       }
 
       const result = await DepartmentModel.updateDepartment(id, name, status);
-      return res.json({ success: true, message: "Department updated successfully", result });
+      return res.status(200).send(response.successData(result, "Department updated successfully"));
     } catch (err) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).send(response.failed(err.message));
     }
   },
 
-  // Delete department
+  //  Delete department
   async remove(req, res) {
     try {
-      const { id } = req.params;
+      const id = encrypt_decrypt.decrypt(req.params.id);
       const result = await DepartmentModel.deleteDepartment(id);
 
-      return res.json({ success: true, message: "Department deleted successfully", result });
+      return res.status(200).send(response.success("Department deleted successfully"));
     } catch (err) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).send(response.failed(err.message));
     }
   }
 };

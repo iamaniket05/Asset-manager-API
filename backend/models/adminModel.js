@@ -45,7 +45,7 @@ const AdminModel = {
       throw err;
     }
   },*/
-
+ 
   async getAllAdmins() {
     const qb = await pool.get_connection();
    
@@ -63,6 +63,8 @@ const AdminModel = {
       // Left joins
       qb.join('designations d', 'u.designation_id = d.id', 'left');
       qb.join('departments dep', 'u.department_id = dep.id', 'left');
+
+      qb.order_by('u.id', 'DESC');
    
       // Execute the query
       const result = await qb.get();
