@@ -1,7 +1,7 @@
 const pool = require('../config/db');
-
+ 
 const DepartmentModel = {
-
+ 
   async findByName(name) {
     const qb = await pool.get_connection();
     try {
@@ -13,14 +13,14 @@ const DepartmentModel = {
       throw err;
     }
   },
-
+ 
   // Create new department
   async createDepartment(name) {
     const qb = await pool.get_connection();
     try {
       const result = await qb.insert('departments', {
         name
-        
+       
       });
       qb.release();
       return result;
@@ -29,20 +29,25 @@ const DepartmentModel = {
       throw err;
     }
   },
-
+ 
   // Get all departments
-  async getAllDepartments() {
-    const qb = await pool.get_connection();
-    try {
-      const result = await qb.select('*').get('departments');
-      qb.release();
-      return result;
-    } catch (err) {
-      qb.release();
-      throw err;
-    }
-  },
-
+async getAllDepartments() {
+  const qb = await pool.get_connection();
+  try {
+    const result = await qb
+      .select('*')
+      .from('departments')
+      .order_by('id', 'DESC')
+      .get();
+ 
+    qb.release();
+    return result;
+  } catch (err) {
+    qb.release();
+    throw err;
+  }
+},
+ 
   // Get department by ID
   async getDepartmentById(id) {
     const qb = await pool.get_connection();
@@ -55,7 +60,7 @@ const DepartmentModel = {
       throw err;
     }
   },
-
+ 
   // Update department by ID
   async updateDepartment(id, name) {
     const qb = await pool.get_connection();
@@ -69,7 +74,7 @@ const DepartmentModel = {
       throw err;
     }
   },
-
+ 
   // Delete department by ID
   async deleteDepartment(id) {
     const qb = await pool.get_connection();
@@ -83,5 +88,5 @@ const DepartmentModel = {
     }
   }
 };
-
+ 
 module.exports = DepartmentModel;
