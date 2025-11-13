@@ -1,30 +1,20 @@
 let express = require('express');
 let router = express.Router();
-
 let adminController = require('../controllers/adminController');
 let header = require('../utilities/header');
+let validator = require('../utilities/validation/validator');
+const token = require('../utilities/token');
 
+router.post('/register', header.checkHeader,validator.register, adminController.register);
 
-// Admin Routes (Standard Style)
+router.post('/login', header.checkHeader,validator.login, adminController.login);
 
+router.get('/getAllAdmins', header.checkHeader,token.verifyToken, adminController.getAllAdmins);
 
-//  Register admin
-router.post('/register', header.checkHeader, adminController.register);
+router.get('/:id', header.checkHeader,token.verifyToken, adminController.getAdminById);
 
-//  Login admin
-router.post('/login', header.checkHeader, adminController.login);
+router.put('/update/:id', header.checkHeader, token.verifyToken, adminController.update);
 
-//  List all admins
-router.get('/getAllAdmins', header.checkHeader, adminController.getAllAdmins);
-
-//  Get admin by ID
-router.get('/:id', header.checkHeader, adminController.getAdminById);
-
-//  Update admin by ID
-router.put('/update/:id', header.checkHeader, adminController.update);
-
-//  Delete admin by ID
-router.delete('/delete/:id', header.checkHeader, adminController.delete);
-
+router.delete('/delete/:id', header.checkHeader, token.verifyToken, adminController.delete);
 
 module.exports = router;

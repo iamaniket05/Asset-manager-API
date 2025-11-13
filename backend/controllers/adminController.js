@@ -90,7 +90,7 @@ let adminController = {
  
             return res.status(200).send(response.successData({ token, name: user.name }, 'Login successful'));
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             return res.status(500).send(response.failed(error.message));
         }
     },
