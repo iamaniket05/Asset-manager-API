@@ -1,5 +1,5 @@
 const Joi = require('joi');
-
+let response = require('../response');
 let validator = {
 
   register: async (req, res, next) => {
@@ -67,14 +67,118 @@ let validator = {
     const result = schema.validate(req.body, { abortEarly: false });
 
     if (result.error) {
-      return res.status(400).json({
-        status: 'failed',
-        message: result.error.details.map(e => e.message)
-      });
+      return res
+      .status(200)
+      .send(response.failed(result.error.details.map(e => e.message)));
     } else {
       next();
     }
-  }
+  },
+
+  departmentCreate: async (req, res, next) => {
+    const schema = Joi.object({
+      name: Joi.string()
+        .trim()
+        .min(2)
+        .max(50)
+        .required()
+        .messages({
+          'string.empty': 'Department name is required',
+          'string.min': 'Department name must be at least 2 characters long',
+          'string.max': 'Department name cannot exceed 50 characters',
+          'any.required': 'Department name is required'
+        }),
+    });
+
+    const result = schema.validate(req.body, { abortEarly: false });
+
+    if (result.error) {
+      return res
+      .status(200)
+      .send(response.failed(result.error.details.map(e => e.message)));
+    } else {
+      next();
+    }
+  },
+
+  designationCreate: async (req, res, next) => {
+    const schema = Joi.object({
+      name: Joi.string()
+        .trim()
+        .min(2)
+        .max(50)
+        .required()
+        .messages({
+          'string.empty': 'Designation name is required',
+          'string.min': 'Designation name must be at least 2 characters long',
+          'string.max': 'Designation name cannot exceed 50 characters',
+          'any.required': 'Designation name is required'
+        }),
+    });
+
+    const result = schema.validate(req.body, { abortEarly: false });
+
+    if (result.error) {
+      return res
+      .status(200)
+      .send(response.failed(result.error.details.map(e => e.message)));
+    } else {
+      next();
+    }
+  },
+
+  departmentUpdate: async (req, res, next) => {
+    const schema = Joi.object({
+     
+      name: Joi.string()
+        .trim()
+        .min(2)
+        .max(50)
+        .required()
+        .messages({
+          'string.empty': 'Department name is required',
+          'string.min': 'Department name must be at least 2 characters long',
+          'string.max': 'Department name cannot exceed 50 characters',
+          'any.required': 'Department name is required'
+        }),
+    }).unknown(true); 
+
+    const result = schema.validate(req.body, { abortEarly: false });
+
+    if (result.error) {
+      return res
+      .status(200)
+      .send(response.failed(result.error.details.map(e => e.message)));
+    } else {
+      next();
+    }
+  },
+  
+  designationUpdate: async (req, res, next) => {
+    const schema = Joi.object({
+     
+      name: Joi.string()
+        .trim()
+        .min(2)
+        .max(50)
+        .required()
+        .messages({
+          'string.empty': 'Designation name is required',
+          'string.min': 'Designation name must be at least 2 characters long',
+          'string.max': 'Designation name cannot exceed 50 characters',
+          'any.required': 'Designation name is required'
+        }),
+    }).unknown(true);
+
+    const result = schema.validate(req.body, { abortEarly: false });
+
+    if (result.error) {
+      return res.status(200).send(response.failed(error.message));
+    } else {
+      next();
+    }
+  },
+
 };
 
 module.exports = validator;

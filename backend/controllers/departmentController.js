@@ -68,7 +68,6 @@ const departmentController = {
     }
   },
 
-  //  Update department
   async update(req, res) {
     try {
       const encryptedId = req.params.id || req.body.id;
@@ -76,7 +75,7 @@ const departmentController = {
       const { name, status } = req.body;
 
       if (!name || !status) {
-        return res.status(400).send(response.failed("Name and status are required"));
+        return res.status(200).send(response.failed("Name and status are required"));
       }
 
       const existing = await DepartmentModel.findByName(name);
