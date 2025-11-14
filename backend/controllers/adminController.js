@@ -149,14 +149,21 @@ let adminController = {
  
         // Only return encrypted IDs for department and designation
         const responseData = {
-            id: encryptedId, // keep admin ID encrypted
+            id: encryptedId,
             name: admin.name,
             email: admin.email,
             phone_number: admin.phone_number,
             country_code: admin.country_code,
-            encrypted_designation_id: encrypt_decrypt.encrypt(admin.designation_id),
-            encrypted_department_id: encrypt_decrypt.encrypt(admin.department_id)
+        
+            encrypted_designation_id: admin.designation_id
+                ? encrypt_decrypt.encrypt(admin.designation_id)
+                : null,
+        
+            encrypted_department_id: admin.department_id
+                ? encrypt_decrypt.encrypt(admin.department_id)
+                : null
         };
+        
  
         return res.status(200).send({
             success: true,
@@ -176,9 +183,10 @@ let adminController = {
 update: async (req, res) => {
     try {
         let encryptedId = req.params.id;
-        // 1️⃣ Decrypt the admin ID
+
+        //  Decrypt admin ID
         let id = encrypt_decrypt.decrypt(encryptedId);
- 
+
         let {
             name,
             email,
@@ -187,11 +195,12 @@ update: async (req, res) => {
             country_code,
             phone_number
         } = req.body;
- 
-        // 2️⃣ Decrypt the designation and department IDs
+
+        //  Decrypt designation and department IDs (if sent)
         const designation_id = encDesignation ? encrypt_decrypt.decrypt(encDesignation) : null;
         const department_id = encDepartment ? encrypt_decrypt.decrypt(encDepartment) : null;
- 
+
+        // Prepare update data
         let data = {};
         if (name) data.name = name;
         if (email) data.email = email;
@@ -199,19 +208,28 @@ update: async (req, res) => {
         if (department_id) data.department_id = department_id;
         if (country_code) data.country_code = country_code;
         if (phone_number) data.phone_number = phone_number;
- 
+
         if (Object.keys(data).length === 0) {
             return res.status(200).send(response.failed('No valid fields to update'));
         }
- 
-        await AdminModel.updateAdmin(id, data);
- 
-        return res.status(200).send(response.success('User updated successfully'));
+
+        //  IMPORTANT FIX: CHECK affectedRows
+        const updateResult = await AdminModel.updateAdmin(id, data);
+
+        //  No record found (deleted / invalid ID)
+        if (!updateResult || updateResult.affectedRows === 0) {
+            return res.status(404).send(response.failed("Admin not found"));
+        }
+
+        //  Successfully updated
+        return res.status(200).send(response.success("User updated successfully"));
+
     } catch (error) {
         console.log(error);
         return res.status(500).send(response.failed(error.message));
     }
-}  ,
+},
+
  
     // Delete admin by ID
  
