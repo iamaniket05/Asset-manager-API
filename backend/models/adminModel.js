@@ -89,7 +89,7 @@ const AdminModel = {
     }
   },
  
-  async updateAdmin(id, data) {
+  /*async updateAdmin(id, data) {
     const qb = await pool.get_connection();
     try {
       const result = await qb.update('users', data, { id });
@@ -99,7 +99,21 @@ const AdminModel = {
       qb.release();
       throw err;
     }
-  },
+  },*/
+
+  async updateAdmin(id, data) {
+    const qb = await pool.get_connection();
+    try {
+        const result = await qb.update('users', data, { id });
+        qb.release();
+
+        // result contains affectedRows → return it
+        return result;
+    } catch (err) {
+        qb.release();
+        throw err;
+    }
+},
  
   async deleteAdmin(id) {
     const qb = await pool.get_connection();
