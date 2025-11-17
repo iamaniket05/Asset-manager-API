@@ -98,39 +98,45 @@ let adminController = {
  
    
     getAllAdmins: async (req, res) => {
- 
+        
         try {
-          const admins = await AdminModel.getAllAdmins();
+          const { name, email, department_id, designation_id } = req.query;
+      
+          const admins = await AdminModel.getAllAdmins({
+            name,
+            email,
+            department_id: department_id ? encrypt_decrypt.decrypt(department_id) : null,
+            designation_id: designation_id ? encrypt_decrypt.decrypt(designation_id) : null,
+          });
+      
           let admin_arr = [];
-     
-          for (let admin of admins) {
+      
+          admins.forEach(admin => {
             admin_arr.push({
               id: encrypt_decrypt.encrypt(admin.id),
               name: admin.name,
               email: admin.email,
-              designation_id: admin.designation_id ? encrypt_decrypt.encrypt(admin.designation_id) : null,
-              designation_name: admin.designation_name,
-              department_id: admin.department_id ? encrypt_decrypt.encrypt(admin.department_id) : null,
               department_name: admin.department_name,
+              designation_name: admin.designation_name,
               country_code: admin.country_code,
-              phone_number: admin.phone_number,
+              phone_number: admin.phone_number
             });
-          }
-     
+          });
+      
           res.status(200).send({
             success: true,
             message: "User list fetched successfully",
             data: admin_arr
           });
-     
+      
         } catch (err) {
-          console.log(err);
           res.status(500).send({
             success: false,
             error: err.message
           });
         }
       },
+      
    
   getAdminById: async (req, res) => {
     try {
