@@ -30,24 +30,26 @@ const DepartmentModel = {
     }
   },
  
-  // Get all departments
-async getAllDepartments() {
-  const qb = await pool.get_connection();
-  try {
-    const result = await qb
-      .select('*')
-      .from('departments')
-      .order_by('id', 'DESC')
-      .get();
- 
-    qb.release();
-    return result;
-  } catch (err) {
-    qb.release();
-    throw err;
-  }
+  async getFilteredDepartments(name, status) {
+    const qb = await pool.get_connection();
+    try {
+        qb.select("*").from("departments");
+
+        if (name) qb.like("name", name);
+        if (status !== "" && status !== undefined) qb.where("status", status);
+
+        qb.order_by("id", "DESC");
+
+        const result = await qb.get();
+        qb.release();
+        return result;
+    } catch (err) {
+        qb.release();
+        throw err;
+    }
 },
- 
+
+
   // Get department by ID
   async getDepartmentById(id) {
     const qb = await pool.get_connection();
