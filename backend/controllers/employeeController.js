@@ -1,14 +1,14 @@
 let bcrypt = require('bcryptjs');
 let jwt = require('jsonwebtoken');
 let moment = require('moment');
-let AdminModel = require('../models/adminModel');
+let EmployeeModel = require('../models/employeeModel');
 let response = require('../utilities/response');
 const encrypt_decrypt = require('../utilities/encrypt_decrypt');
  
-let adminController = {
+let employeeController = {
  
    
-    register: async (req, res) => {
+    create: async (req, res) => {
         try {
             let {
                 name,
@@ -24,18 +24,16 @@ let adminController = {
                 return res.status(200).send(response.failed('Name, email, and password are required'));
             }
    
-            // Check if email already exists
-            let existing = await AdminModel.findAdminByEmail(email);
+            let existing = await EmployeeModel.findByEmail(email);
             if (existing) {
                 return res.status(200).send(response.failed('Email already exists'));
             }
    
-            // 🔹 Decrypt designation_id and department_id
             if (designation_id) designation_id = encrypt_decrypt.decrypt(designation_id);
             if (department_id) department_id = encrypt_decrypt.decrypt(department_id);
    
             let hashedPassword = bcrypt.hashSync(password, 10);
-            let adminData = {
+            let data = {
                 name,
                 email,
                 password: hashedPassword,
@@ -46,18 +44,14 @@ let adminController = {
                 created_at: moment().format('YYYY-MM-DD H:m:s')
             };
    
-            await AdminModel.createAdmin(adminData);
-            return res.status(200).send(response.success('Admin registered successfully'));
+            await EmployeeModel.create(data);
+            return res.status(200).send(response.success('Employee Created successfully'));
         } catch (error) {
             console.log(error);
             return res.status(500).send(response.failed(error.message));
         }
     },
  
- 
-   
-    // Login Admin
-   
     login: async (req, res) => {
         try {
             let { email, password } = req.body;
@@ -65,7 +59,7 @@ let adminController = {
                 return res.status(200).send(response.failed('Email and password are required'));
             }
  
-            let user = await AdminModel.findAdminByEmail(email);
+            let user = await EmployeeModel.findByEmail(email);
             if (!user) {
                 return res.status(200).send(response.failed('Invalid credentials'));
             }
@@ -79,7 +73,7 @@ let adminController = {
                 id: user.id,
                 email: user.email,
                 name: user.name,
-                user: 'admin'
+                user: 'employee'
             };
  
             let token = jwt.sign(
@@ -97,12 +91,12 @@ let adminController = {
  
  
    
-    getAllAdmins: async (req, res) => {
+    getAll: async (req, res) => {
         
         try {
           const { name, email, department_id, designation_id } = req.query;
       
-          const admins = await AdminModel.getAllAdmins({
+          const admins = await EmployeeModel.getAll({
             name,
             email,
             department_id: department_id ? encrypt_decrypt.decrypt(department_id) : null,
@@ -138,18 +132,17 @@ let adminController = {
       },
       
    
-  getAdminById: async (req, res) => {
+  getById: async (req, res) => {
     try {
         const encryptedId = req.params.id;
         const id = encrypt_decrypt.decrypt(encryptedId);
  
-        // Fetch the admin record
-        const admin = await AdminModel.getAdminById(id);
+        const admin = await EmployeeModel.getById(id);
  
         if (!admin) {
             return res.status(404).send({
                 success: false,
-                message: 'Admin not found'
+                message: 'Employee not found'
             });
         }
  
@@ -173,7 +166,7 @@ let adminController = {
  
         return res.status(200).send({
             success: true,
-            message: 'Admin fetched successfully',
+            message: 'Employee fetched successfully',
             data: responseData
         });
  
@@ -190,7 +183,6 @@ update: async (req, res) => {
     try {
         let encryptedId = req.params.id;
 
-        //  Decrypt admin ID
         let id = encrypt_decrypt.decrypt(encryptedId);
 
         let {
@@ -219,44 +211,34 @@ update: async (req, res) => {
             return res.status(200).send(response.failed('No valid fields to update'));
         }
 
-        //  IMPORTANT FIX: CHECK affectedRows
-        const updateResult = await AdminModel.updateAdmin(id, data);
+        const updateResult = await EmployeeModel.update(id, data);
 
-        //  No record found (deleted / invalid ID)
         if (!updateResult || updateResult.affectedRows === 0) {
-            return res.status(404).send(response.failed("Admin not found"));
+            return res.status(404).send(response.failed("Employee not found"));
         }
 
-        //  Successfully updated
-        return res.status(200).send(response.success("User updated successfully"));
+        return res.status(200).send(response.success("Employee updated successfully"));
 
     } catch (error) {
         console.log(error);
         return res.status(500).send(response.failed(error.message));
     }
 },
-
- 
-    // Delete admin by ID
  
     delete: async (req, res) => {
         try {
  
             const id = encrypt_decrypt.decrypt(req.params.id);
-            await AdminModel.deleteAdmin(id);
-            return res.status(200).send(response.success('Admin deleted successfully'));
+            await EmployeeModel.delete(id);
+            return res.status(200).send(response.success('Employee deleted successfully'));
         } catch (error) {
             console.log(error);
             return res.status(500).send(response.failed(error.message));
         }
     },
  
-   
- 
- 
- 
 };
  
  
  
-module.exports = adminController;
+module.exports = employeeController;

@@ -26,24 +26,24 @@ const departmentController = {
     }
   },
 
-  //  Get all departments (Encrypt IDs)
   async getAll(req, res) {
     try {
-      const result = await DepartmentModel.getAllDepartments();
+        const { name, status } = req.query;
 
-      // 📝 NOTE: Encrypt ID before sending
-      const encryptedResult = result.map(department => ({
-        id: encrypt_decrypt.encrypt(department.id),
-        name: department.name,
-        status: department.status,
-        created_at: department.created_at
-      }));
+        const result = await DepartmentModel.getFilteredDepartments(name, status);
 
-      return res.status(200).send(response.successData(encryptedResult, "Department list fetched successfully"));
+        const encryptedResult = result.map(dept => ({
+            id: encrypt_decrypt.encrypt(dept.id),
+            name: dept.name,
+            status: dept.status
+        }));
+
+        return res.status(200).send(response.successData(encryptedResult, "Department list fetched"));
     } catch (err) {
-      return res.status(500).send(response.failed(err.message));
+        return res.status(500).send(response.failed(err.message));
     }
-  },
+},
+
 
   //  Get department by ID
   async getById(req, res) {

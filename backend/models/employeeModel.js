@@ -1,10 +1,10 @@
 const pool = require('../config/db');
  
-const AdminModel = {
-  async createAdmin(data) {
+const EmployeeModel = {
+  async create(data) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.insert('users', {
+      const result = await qb.insert('employees', {
         name: data.name,
         email: data.email,
         password: data.password,
@@ -22,10 +22,10 @@ const AdminModel = {
     }
   },
  
-  async findAdminByEmail(email) {
+  async findByEmail(email) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.select('*').where({ email }).get('users');
+      const result = await qb.select('*').where({ email }).get('employees');
       qb.release();
       return result && result.length > 0 ? result[0] : null;
     } catch (err) {
@@ -77,7 +77,7 @@ const AdminModel = {
   //   }
   // },
  
-  getAllAdmins: async (filters = {}) => {
+  getAll: async (filters = {}) => {
     const qb = await pool.get_connection();
 
     try {
@@ -92,7 +92,7 @@ const AdminModel = {
             d.name AS department_name,
             ds.name AS designation_name
         `)
-        .from('users AS a')
+        .from('employees AS a')
         .join('departments AS d', 'd.id = a.department_id', 'left')
         .join('designations AS ds', 'ds.id = a.designation_id', 'left');
 
@@ -120,10 +120,10 @@ const AdminModel = {
 
 
  
-  async getAdminById(id) {
+  async getById(id) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.select('*').where({ id }).get('users');
+      const result = await qb.select('*').where({ id }).get('employees');
       qb.release();
       return result && result.length > 0 ? result[0] : null;
     } catch (err) {
@@ -144,10 +144,10 @@ const AdminModel = {
     }
   },*/
 
-  async updateAdmin(id, data) {
+  async update(id, data) {
     const qb = await pool.get_connection();
     try {
-        const result = await qb.update('users', data, { id });
+        const result = await qb.update('employees', data, { id });
         qb.release();
 
         // result contains affectedRows → return it
@@ -158,10 +158,10 @@ const AdminModel = {
     }
 },
  
-  async deleteAdmin(id) {
+  async delete(id) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.delete('users', { id });
+      const result = await qb.delete('employees', { id });
       qb.release();
       return result;
     } catch (err) {
@@ -171,4 +171,4 @@ const AdminModel = {
   }
 };
  
-module.exports = AdminModel;
+module.exports = EmployeeModel;
