@@ -16,11 +16,13 @@ const adminRoutes = require('./routes/admin_routes');
 const departmentRoutes = require('./routes/department_routes');
 const designationRoutes = require('./routes/designation_routes');
 const assetRoutes = require('./routes/asset_routes');
+const employeeRoutes = require('./routes/employee_routes');
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/department', departmentRoutes);
 app.use('/api/designation', designationRoutes);
 app.use('/api/asset', assetRoutes);
+app.use('/api/employee', employeeRoutes);
 
 
 module.exports = app;

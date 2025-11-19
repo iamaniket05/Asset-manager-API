@@ -32,6 +32,13 @@ let validator = {
           'string.max': 'Password cannot exceed 20 characters',
           'any.required': 'Password is required'
         }),
+        confirm_password: Joi.string()
+        .required()
+        .valid(Joi.ref('password'))
+        .messages({
+          'any.only': 'Passwords do not match',
+          'any.required': 'Confirm password is required'
+        }),
  
       // 🔹 Optional Fields (validate ONLY if sent)
       designation_id: Joi.string()
@@ -108,6 +115,66 @@ let validator = {
       next();
     }
   },
+
+  updateValidator :  async (req, res, next) => {
+    const schema = Joi.object({
+    name: Joi.string()
+      .min(3)
+      .max(50)
+      .optional()
+      .messages({
+        'string.min': 'Name should have at least 3 characters',
+        'string.max': 'Name should not exceed 50 characters'
+      }),
+  
+    email: Joi.string()
+      .email()
+      .optional()
+      .messages({
+        'string.email': 'Enter a valid email address'
+      }),
+  
+    designation_id: Joi.string()
+      .optional()
+      .allow(null, '')
+      .messages({
+        'string.base': 'Invalid designation ID'
+      }),
+  
+    department_id: Joi.string()
+      .optional()
+      .allow(null, '')
+      .messages({
+        'string.base': 'Invalid department ID'
+      }),
+  
+    country_code: Joi.string()
+      .optional()
+      .allow(null, '')
+      .pattern(/^[0-9]+$/)
+      .messages({
+        'string.pattern.base': 'Country code must contain only numbers'
+      }),
+  
+    phone_number: Joi.string()
+      .optional()
+      .allow(null, '')
+      .pattern(/^[0-9]{7,10}$/)
+      .messages({
+        'string.pattern.base': 'Phone number must be 10 digits'
+      })
+  
+  }).unknown(true);
+  const result = schema.validate(req.body, { abortEarly: false });
+ 
+  if (result.error) {
+    return res
+    .status(200)
+    .send(response.failed(result.error.details.map(e => e.message)));
+  } else {
+    next();
+  }
+},
  
   departmentCreate: async (req, res, next) => {
     const schema = Joi.object({
