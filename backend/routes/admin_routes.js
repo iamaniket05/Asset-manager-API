@@ -13,7 +13,7 @@ router.get('/getAllAdmins', header.checkHeader,token.verifyToken, adminControlle
 
 router.get('/:id', header.checkHeader,token.verifyToken, adminController.getAdminById);
 
-router.put('/update/:id', header.checkHeader, token.verifyToken, adminController.update);
+router.put('/update/:id', header.checkHeader, token.verifyToken,validator.updateValidator, adminController.update);
 
 router.delete('/delete/:id', header.checkHeader, token.verifyToken, adminController.delete);
 
