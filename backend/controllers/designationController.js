@@ -79,8 +79,8 @@ const designationController = {
       const id = encrypt_decrypt.decrypt(encryptedId);
       const { name, status } = req.body;
 
-      if (!name || !status) {
-        return res.status(400).send(response.failed("Name and status are required"));
+      if (!name) {
+        return res.status(400).send(response.failed("Name is required"));
       }
 
       const existing = await DesignationModel.findByName(name);

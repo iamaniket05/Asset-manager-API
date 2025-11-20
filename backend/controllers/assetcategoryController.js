@@ -1,10 +1,9 @@
-const DepartmentModel = require('../models/departmentModel');
+const AssetCategoryModel = require('../models/assetcategoryModel');
 const encrypt_decrypt = require('../utilities/encrypt_decrypt');
 let response = require('../utilities/response'); // 
 
-const departmentController = {
+const assetcategoryController = {
 
-  // ✅ Create department
   async create(req, res) {
     try {
       const { name } = req.body;
@@ -13,13 +12,13 @@ const departmentController = {
         return res.status(400).send(response.failed("Name is required"));
       }
 
-      const existing = await DepartmentModel.findByName(name);
+      const existing = await AssetCategoryModel.findByName(name);
       if (existing) {
-        return res.status(200).send(response.failed("Department already exists"));
+        return res.status(200).send(response.failed("AssetCategory already exists"));
       }
 
-      const result = await DepartmentModel.createDepartment(name);
-      return res.status(201).send(response.successData(result, "Department created successfully"));
+      const result = await AssetCategoryModel.create(name);
+      return res.status(201).send(response.successData(result, "AssetCategory created successfully"));
     } catch (error) {
       console.log(error);
       return res.status(500).send(response.failed(error.message));
@@ -30,7 +29,7 @@ const departmentController = {
     try {
         const { name, status } = req.query;
 
-        const result = await DepartmentModel.getFilteredDepartments(name, status);
+        const result = await AssetCategoryModel.getFiltered(name, status);
 
         const encryptedResult = result.map(dept => ({
             id: encrypt_decrypt.encrypt(dept.id),
@@ -38,7 +37,7 @@ const departmentController = {
             status: dept.status
         }));
 
-        return res.status(200).send(response.successData(encryptedResult, "Department list fetched"));
+        return res.status(200).send(response.successData(encryptedResult, "AssetCategory list fetched"));
     } catch (err) {
         return res.status(500).send(response.failed(err.message));
     }
@@ -50,10 +49,10 @@ const departmentController = {
     try {
       const encryptedId = req.params.id;
       const id = encrypt_decrypt.decrypt(encryptedId);
-      const result = await DepartmentModel.getDepartmentById(id);
+      const result = await AssetCategoryModel.getById(id);
 
       if (!result) {
-        return res.status(404).send(response.failed("Department not found"));
+        return res.status(404).send(response.failed("AssetCategory not found"));
       }
 
       const responseData = {
@@ -62,7 +61,7 @@ const departmentController = {
         status: result.status,
       };
 
-      return res.status(200).send(response.successData(responseData, "Department fetched successfully"));
+      return res.status(200).send(response.successData(responseData, "AssetCategory fetched successfully"));
     } catch (err) {
       return res.status(500).send(response.failed(err.message));
     }
@@ -78,13 +77,13 @@ const departmentController = {
         return res.status(200).send(response.failed("Name is required"));
       }
 
-      const existing = await DepartmentModel.findByName(name);
+      const existing = await AssetCategoryModel.findByName(name);
       if (existing && existing.id != id) {
-        return res.status(200).send(response.failed("Department already exists"));
+        return res.status(200).send(response.failed("AssetCategory already exists"));
       }
 
-      const result = await DepartmentModel.updateDepartment(id, name, status);
-      return res.status(200).send(response.successData(result, "Department updated successfully"));
+      const result = await AssetCategoryModel.update(id, name, status);
+      return res.status(200).send(response.successData(result, "AssetCategory updated successfully"));
     } catch (err) {
       return res.status(500).send(response.failed(err.message));
     }
@@ -94,13 +93,13 @@ const departmentController = {
   async remove(req, res) {
     try {
       const id = encrypt_decrypt.decrypt(req.params.id);
-      const result = await DepartmentModel.deleteDepartment(id);
+      const result = await AssetCategoryModel.delete(id);
 
-      return res.status(200).send(response.success("Department deleted successfully"));
+      return res.status(200).send(response.success("AssetCategory deleted successfully"));
     } catch (err) {
       return res.status(500).send(response.failed(err.message));
     }
   }
 };
 
-module.exports = departmentController;
+module.exports = assetcategoryController;
