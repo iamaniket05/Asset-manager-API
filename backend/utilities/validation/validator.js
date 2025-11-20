@@ -279,6 +279,61 @@ let validator = {
       next();
     }
   },
+
+  assetcategoryCreate: async (req, res, next) => {
+    const schema = Joi.object({
+      name: Joi.string()
+        .trim()
+        .min(2)
+        .max(50)
+        .required()
+        .messages({
+          'string.empty': 'Asset-Category name is required',
+          'string.min': 'Asset-Category name must be at least 2 characters long',
+          'string.max': 'Asset-Category name cannot exceed 50 characters',
+          'any.required': 'Asset-Category name is required'
+        }),
+    });
+ 
+    const result = schema.validate(req.body, { abortEarly: false });
+ 
+    if (result.error) {
+      return res
+      .status(200)
+      .send(response.failed(result.error.details.map(e => e.message)));
+    } else {
+      next();
+    }
+  },
+
+  assetcategoryUpdate: async (req, res, next) => {
+    const schema = Joi.object({
+     
+      name: Joi.string()
+        .trim()
+        .min(2)
+        .max(50)
+        .required()
+        .messages({
+          'string.empty': 'Asset-Category name is required',
+          'string.min': 'Asset-Category name must be at least 2 characters long',
+          'string.max': 'Asset-Category name cannot exceed 50 characters',
+          'any.required': 'Asset-Category name is required'
+        }),
+    }).unknown(true);
+ 
+    const result = schema.validate(req.body, { abortEarly: false });
+ 
+    if (result.error) {
+      return res
+      .status(200)
+      .send(response.failed(result.error.details.map(e => e.message)));
+    } else {
+      next();
+    }
+  },
+
+
  
 };
  

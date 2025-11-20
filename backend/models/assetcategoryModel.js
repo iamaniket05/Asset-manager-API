@@ -1,11 +1,11 @@
 const pool = require('../config/db');
  
-const DepartmentModel = {
+const AssetCategoryModel = {
  
   async findByName(name) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.select('*').where({ name }).get('departments');
+      const result = await qb.select('*').where({ name }).get('asset_categories');
       qb.release();
       return result && result.length > 0 ? result[0] : null;
     } catch (err) {
@@ -14,11 +14,10 @@ const DepartmentModel = {
     }
   },
  
-  // Create new department
-  async createDepartment(name) {
+  async create(name) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.insert('departments', {
+      const result = await qb.insert('asset_categories', {
         name
        
       });
@@ -30,10 +29,10 @@ const DepartmentModel = {
     }
   },
  
-  async getFilteredDepartments(name, status) {
+  async getFiltered(name, status) {
     const qb = await pool.get_connection();
     try {
-        qb.select("*").from("departments");
+        qb.select("*").from("asset_categories");
 
         if (name) qb.like("name", name);
         if (status !== "" && status !== undefined) qb.where("status", status);
@@ -49,12 +48,10 @@ const DepartmentModel = {
     }
 },
 
-
-  // Get department by ID
-  async getDepartmentById(id) {
+  async getById(id) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.select('*').where({ id }).get('departments');
+      const result = await qb.select('*').where({ id }).get('asset_categories');
       qb.release();
       return result && result.length > 0 ? result[0] : null;
     } catch (err) {
@@ -63,12 +60,11 @@ const DepartmentModel = {
     }
   },
  
-  // Update department by ID
-  async updateDepartment(id, name,status) {
+  async update(id, name,status) {
     const qb = await pool.get_connection();
     try {
       const result = await qb
-        .update('departments', { name,status }, { id });
+        .update('asset_categories', { name,status }, { id });
       qb.release();
       return result;
     } catch (err) {
@@ -77,11 +73,10 @@ const DepartmentModel = {
     }
   },
  
-  // Delete department by ID
-  async deleteDepartment(id) {
+  async delete(id) {
     const qb = await pool.get_connection();
     try {
-      const result = await qb.delete('departments', { id });
+      const result = await qb.delete('asset_categories', { id });
       qb.release();
       return result;
     } catch (err) {
@@ -91,4 +86,4 @@ const DepartmentModel = {
   }
 };
  
-module.exports = DepartmentModel;
+module.exports = AssetCategoryModel;
