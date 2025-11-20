@@ -280,6 +280,7 @@ let validator = {
     }
   },
 
+
   assetcategoryCreate: async (req, res, next) => {
     const schema = Joi.object({
       name: Joi.string()
@@ -331,6 +332,64 @@ let validator = {
     } else {
       next();
     }
+  },
+
+
+  supplierCreate: async (req, res, next) => {
+    const schema = Joi.object({
+      supplier_name: Joi.string().trim().min(2).max(100).required().messages({
+        'string.empty': 'Supplier name is required',
+        'any.required': 'Supplier name is required'
+      }),
+
+      email: Joi.string().email().required().messages({
+        'string.email': 'Enter a valid email address',
+        'any.required': 'Email is required'
+      }),
+
+      phone: Joi.string().pattern(/^[0-9]{7,15}$/).required().messages({
+        'string.pattern.base': 'Phone number must be 7–15 digits',
+        'any.required': 'Phone number is required'
+      }),
+
+      organization_name: Joi.string().trim().min(2).max(100).required().messages({
+        'string.empty': 'Organization name is required',
+        'any.required': 'Organization name is required'
+      }),
+
+      address: Joi.string().trim().min(5).max(255).required().messages({
+        'string.empty': 'Address is required',
+        'any.required': 'Address is required'
+      }),
+    }).unknown(true);
+
+    const result = schema.validate(req.body, { abortEarly: false });
+    if (result.error) {
+      return res.status(200).send(response.failed(result.error.details.map(e => e.message)));
+    }
+    next();
+  },
+
+  supplierUpdate: async (req, res, next) => {
+    const schema = Joi.object({
+      supplier_name: Joi.string().trim().min(2).max(100).optional(),
+
+      email: Joi.string().email().optional(),
+
+      phone: Joi.string().pattern(/^[0-9]{7,15}$/).optional(),
+
+      organization_name: Joi.string().trim().min(2).max(100).optional(),
+
+      address: Joi.string().trim().min(5).max(255).optional(),
+
+      status: Joi.string().valid('active', 'inactive').optional()
+    }).unknown(true);
+
+    const result = schema.validate(req.body, { abortEarly: false });
+    if (result.error) {
+      return res.status(200).send(response.failed(result.error.details.map(e => e.message)));
+    }
+    next();
   },
 
 
