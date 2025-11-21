@@ -395,5 +395,56 @@ let validator = {
 
  
 };
+
+validator.assetCreate = async (req, res, next) => {
+  const schema = Joi.object({
+    model: Joi.string().trim().min(2).max(50).required().messages({
+      'string.empty': 'Model is required',
+      'string.min': 'Model must be at least 2 characters',
+      'string.max': 'Model cannot exceed 50 characters',
+      'any.required': 'Model is required'
+    }),
+    name: Joi.string().trim().min(2).max(100).required().messages({
+      'string.empty': 'Asset name is required',
+      'string.min': 'Asset name must be at least 2 characters',
+      'string.max': 'Asset name cannot exceed 100 characters',
+      'any.required': 'Asset name is required'
+    }),
+    count: Joi.number().integer().min(1).required().messages({
+      'number.base': 'Count must be a number',
+      'number.min': 'Count must be at least 1',
+      'any.required': 'Count is required'
+    }),
+    description: Joi.string().trim().max(255).optional().allow(''),
+    asset_categoryid: Joi.string().optional().allow(''),
+    asset_supplierid: Joi.string().optional().allow(''),
+    price: Joi.number().optional().allow(null)
+  }).unknown(true);
+
+  const result = schema.validate(req.body, { abortEarly: false });
+  if (result.error) {
+    return res.status(200).send(response.failed(result.error.details.map(e => e.message)));
+  }
+  next();
+};
+
+validator.assetUpdate = async (req, res, next) => {
+  const schema = Joi.object({
+    model: Joi.string().trim().min(2).max(50).optional(),
+    name: Joi.string().trim().min(2).max(100).optional(),
+    count: Joi.number().integer().min(1).optional(),
+    description: Joi.string().trim().max(255).optional().allow(''),
+    asset_categoryid: Joi.string().optional().allow(''),
+    asset_supplierid: Joi.string().optional().allow(''),
+    price: Joi.number().optional().allow(null)
+  }).unknown(true);
+
+  const result = schema.validate(req.body, { abortEarly: false });
+  if (result.error) {
+    return res.status(200).send(response.failed(result.error.details.map(e => e.message)));
+  }
+  next();
+
+}
  
 module.exports = validator;
