@@ -4,7 +4,6 @@ const assetController = require('../controllers/assetController');
 const header = require('../utilities/header');
 const token = require('../utilities/token');
 
-// Same structure as department & designation routes
 router.post('/create', header.checkHeader, token.verifyToken, assetController.create);
 router.get('/list', header.checkHeader, token.verifyToken, assetController.getAll);
 router.get('/get/:id', header.checkHeader, token.verifyToken, assetController.getById);

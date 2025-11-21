@@ -117,8 +117,6 @@ const AdminModel = {
         qb.release();
     }
 },
-
-
  
   async getAdminById(id) {
     const qb = await pool.get_connection();
