@@ -1,7 +1,7 @@
 const pool = require('../config/db');
-
+ 
 const SupplierModel = {
-  
+ 
   async findBySupplierName(supplier_name) {
     const qb = await pool.get_connection();
     try {
@@ -13,7 +13,7 @@ const SupplierModel = {
       throw err;
     }
   },
-
+ 
   async createSupplier(data) {
     const qb = await pool.get_connection();
     try {
@@ -25,7 +25,7 @@ const SupplierModel = {
       throw err;
     }
   },
-
+ 
   async getAllSuppliers() {
     const qb = await pool.get_connection();
     try {
@@ -41,7 +41,7 @@ const SupplierModel = {
       throw err;
     }
   },
-
+ 
   async getSupplierById(id) {
     const qb = await pool.get_connection();
     try {
@@ -53,7 +53,7 @@ const SupplierModel = {
       throw err;
     }
   },
-
+ 
   async updateSupplier(id, data) {
     const qb = await pool.get_connection();
     try {
@@ -65,7 +65,7 @@ const SupplierModel = {
       throw err;
     }
   },
-
+ 
   async deleteSupplier(id) {
     const qb = await pool.get_connection();
     try {
@@ -77,7 +77,9 @@ const SupplierModel = {
       throw err;
     }
   },
-
+ 
 };
-
+ 
 module.exports = SupplierModel;
+ 
+ 
