@@ -166,7 +166,62 @@ const AdminModel = {
       qb.release();
       throw err;
     }
-  }
+  },
+
+  async getDashboardCounts() {
+    const qb = await pool.get_connection();
+    try {
+        const queries = {
+            totalAssets: qb.select("COUNT(*) AS totalAssets", false).get("assets"),
+            totalEmployees: qb.select("COUNT(*) AS totalEmployees", false).get("employees"),
+
+            acceptedRequests: qb.select("COUNT(*) AS accepted", false)
+                .where("request_status", "accepted")
+                .get("asset_requests"),
+
+            pendingRequests: qb.select("COUNT(*) AS pending", false)
+                .where("request_status", "pending")
+                .get("asset_requests"),
+
+            onHoldRequests: qb.select("COUNT(*) AS onhold", false)
+                .where("request_status", "onhold")
+                .get("asset_requests"),
+
+            deniedRequests: qb.select("COUNT(*) AS denied", false)
+                .where("request_status", "denied")
+                .get("asset_requests"),
+
+            totalAssign: qb.select("COUNT(*) AS assign", false)
+                .where("status", "assigned")
+                .get("asset_assignments"),
+
+            returnAssets: qb.select("COUNT(*) AS returned", false)
+                .where("status", "returned")
+                .get("asset_assignments"),
+        };
+
+        const results = await Promise.all(Object.values(queries));
+        qb.release();
+
+        return {
+            totalAssets: results[0][0].totalAssets || 0,
+            totalEmployees: results[1][0].totalEmployees || 0,
+
+            acceptedRequests: results[2][0].accepted || 0,
+            pendingRequests: results[3][0].pending || 0,
+            onHoldRequests: results[4][0].onhold || 0,
+            deniedRequests: results[5][0].denied || 0,
+
+            totalAssign: results[6][0].assign || 0,
+            returnAssets: results[7][0].returned || 0,
+        };
+
+    } catch (err) {
+        qb.release();
+        throw err;
+    }
+}
+
 };
  
 module.exports = AdminModel;

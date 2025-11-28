@@ -58,7 +58,6 @@ const OrganizationModel = {
     }
   },
 
-  // Update
   async updateOrganization(id, data) {
     const qb = await pool.get_connection();
     try {
