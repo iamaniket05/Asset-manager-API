@@ -168,7 +168,22 @@ const EmployeeModel = {
       qb.release();
       throw err;
     }
-  }
+  },
+
+  async findByEmployeeId(id) {
+    const qb = await pool.get_connection();
+    try {
+      console.log(id);
+        const result = await qb.select('*').where({ id }).get('employees');
+        qb.release();
+        return result.length > 0 ? result[0] : null;
+    } catch (err) {
+        qb.release();
+        throw err;
+    }
+}
+
+
 };
  
 module.exports = EmployeeModel;

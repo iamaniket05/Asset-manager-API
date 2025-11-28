@@ -4,14 +4,22 @@ const AssetModel = {
   async createAsset(data) {
     const qb = await pool.get_connection();
     try {
+
+      // Initialize required calculated fields
+      data.assigned_assets = 0;
+      data.remaining_assets = data.count;  // set remaining = total count
+
       const result = await qb.insert('assets', data);
+
       qb.release();
       return result;
+
     } catch (err) {
       qb.release();
       throw err;
     }
   },
+
   
 
   getAllAssets: async (filters = {}) => {

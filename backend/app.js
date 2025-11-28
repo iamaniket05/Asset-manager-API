@@ -32,7 +32,11 @@ const organizationRoutes = require('./routes/organization_routes');
 const employeeRoutes = require('./routes/employee_routes');
 const assetcategoryRoutes = require('./routes/assetcategory_routes');
 const supplierRoutes = require('./routes/supplier_routes');
+
 const assetRequestRoutes = require('./routes/assetRequestRoutes');
+
+const assetAssignmentRoutes = require('./routes/assetassignment_routes');
+
 
 // API Prefixes
 app.use('/api/admin', adminRoutes);
@@ -43,7 +47,11 @@ app.use('/api/organization', organizationRoutes);
 app.use('/api/employee', employeeRoutes);
 app.use('/api/assetcategory', assetcategoryRoutes);
 app.use('/api/supplier', supplierRoutes);
+
 app.use('/api/assetrequest', assetRequestRoutes);
+
+app.use('/api/asset-assignment', assetAssignmentRoutes);
+
 
 // Export
 module.exports = app;

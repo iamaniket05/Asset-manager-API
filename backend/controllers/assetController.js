@@ -117,45 +117,55 @@ const assetController = {
   }
 },
  
-  async update(req, res) {
-    try {
-      let encryptedId = req.params.id;
-      const id = encrypt_decrypt.decrypt(encryptedId);
-  
-      let {
-        model,
-        name,
-        count,
-        description,
-        asset_categoryid,
-        asset_supplierid,
-        price
-      } = req.body;
-  
-      const decryptedCategoryId = asset_categoryid ? encrypt_decrypt.decrypt(asset_categoryid) : null;
-      const decryptedSupplierId = asset_supplierid ? encrypt_decrypt.decrypt(asset_supplierid) : null;
-      let data = {};
-      if (model) data.model = model;
-      if (name) data.name = name;
-      if (count) data.count = count;
-      if (description) data.description = description;
-      if (asset_categoryid) data.assetcategory_id = decryptedCategoryId;
-      if (asset_supplierid) data.assetsupplier_id = decryptedSupplierId;
-      if (price) data.price = price;
-  
-      if (Object.keys(data).length === 0) {
-        return res.status(200).send(response.failed("No valid fields to update"));
-      }
-      const result = await AssetModel.updateAsset(id, data);
-      if (!result || result.affectedRows === 0) {
-        return res.status(404).send(response.failed("Asset not found"));
-      }
-  
-      return res.status(200).send(response.success("Asset updated successfully"));
-    } catch (err) {
-      return res.status(500).send(response.failed(err.message));
+async update(req, res) {
+  try {
+    let encryptedId = req.params.id;
+    const id = encrypt_decrypt.decrypt(encryptedId);
+
+    let {
+      model,
+      name,
+      count,
+      description,
+      asset_categoryid,
+      asset_supplierid,
+      price
+    } = req.body;
+
+    const decryptedCategoryId = asset_categoryid ? encrypt_decrypt.decrypt(asset_categoryid) : null;
+    const decryptedSupplierId = asset_supplierid ? encrypt_decrypt.decrypt(asset_supplierid) : null;
+
+    let data = {};
+    if (model) data.model = model;
+    if (name) data.name = name;
+    if (count) data.count = count;
+    if (description) data.description = description;
+    if (asset_categoryid) data.assetcategory_id = decryptedCategoryId;
+    if (asset_supplierid) data.assetsupplier_id = decryptedSupplierId;
+    if (price) data.price = price;
+
+    if (Object.keys(data).length === 0) {
+      return res.status(200).send(response.failed("No valid fields to update"));
     }
-  },
+
+    // 🔹 NEW IMPORTANT LOGIC
+    if (count) {
+      const existingAsset = await AssetModel.getAssetById(id);
+      const assigned = existingAsset.assigned_assets || 0;
+      data.remaining_assets = count - assigned;
+    }
+
+    const result = await AssetModel.updateAsset(id, data);
+    if (!result || result.affectedRows === 0) {
+      return res.status(404).send(response.failed("Asset not found"));
+    }
+
+    return res.status(200).send(response.success("Asset updated successfully"));
+  } catch (err) {
+    return res.status(500).send(response.failed(err.message));
+  }
+},
+
   
   async remove(req, res) {
     try {
