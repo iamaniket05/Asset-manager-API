@@ -392,7 +392,7 @@ let validator = {
     next();
   },
 
-
+ 
 assetCreate : async (req, res, next) => {
   const schema = Joi.object({
     model: Joi.string().trim().min(2).max(50).required().messages({
@@ -441,6 +441,7 @@ assetUpdate : async (req, res, next) => {
     return res.status(200).send(response.failed(result.error.details.map(e => e.message)));
   }
   next();
+
 
 },
 
