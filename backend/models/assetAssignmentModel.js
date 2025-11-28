@@ -1,7 +1,7 @@
 const pool = require('../config/db');
-
+ 
 const AssetAssignmentModel = {
-
+ 
   // Assign asset to employee
   async assignAsset(data) {
     const qb = await pool.get_connection();
@@ -14,7 +14,7 @@ const AssetAssignmentModel = {
       throw err;
     }
   },
-
+ 
   // Get all assignments
     // Get all assignments
   async getAllAssignments() {
@@ -28,14 +28,14 @@ const AssetAssignmentModel = {
       .from('asset_assignments AS aa')
       .join('assets AS a', 'a.id = aa.asset_id')
       .join('employees AS e', 'e.id = aa.employee_id');
-
+ 
       return await qb.get();
     } finally {
       qb.release();
     }
   },
-
-
+ 
+ 
   // Get assignment by ID
   async getAssignmentById(id) {
     const qb = await pool.get_connection();
@@ -48,7 +48,7 @@ const AssetAssignmentModel = {
       throw err;
     }
   },
-
+ 
   // Return asset
   async returnAsset(id, data) {
     const qb = await pool.get_connection();
@@ -61,7 +61,7 @@ const AssetAssignmentModel = {
       throw err;
     }
   },
-
+ 
   // Check if asset has enough quantity before assignment
   async getAssetAvailableCount(asset_id) {
     const qb = await pool.get_connection();
@@ -74,7 +74,7 @@ const AssetAssignmentModel = {
       throw err;
     }
   },
-
+ 
   // Delete assignment by ID
 async deleteAssignment(id) {
   const qb = await pool.get_connection();
@@ -85,7 +85,7 @@ async deleteAssignment(id) {
       qb.release();
       return null;
     }
-
+ 
     const result = await qb.delete('asset_assignments', { id });
     qb.release();
     return assignment; // return deleted assignment info to update Asset counts
@@ -94,8 +94,10 @@ async deleteAssignment(id) {
     throw err;
   }
 }
-
-
+ 
+ 
 };
-
+ 
 module.exports = AssetAssignmentModel;
+ 
+ 
