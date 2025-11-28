@@ -393,10 +393,7 @@ let validator = {
   },
 
 
- 
-};
-
-validator.assetCreate = async (req, res, next) => {
+assetCreate : async (req, res, next) => {
   const schema = Joi.object({
     model: Joi.string().trim().min(2).max(50).required().messages({
       'string.empty': 'Model is required',
@@ -426,9 +423,9 @@ validator.assetCreate = async (req, res, next) => {
     return res.status(200).send(response.failed(result.error.details.map(e => e.message)));
   }
   next();
-};
+},
 
-validator.assetUpdate = async (req, res, next) => {
+assetUpdate : async (req, res, next) => {
   const schema = Joi.object({
     model: Joi.string().trim().min(2).max(50).optional(),
     name: Joi.string().trim().min(2).max(100).optional(),
@@ -445,6 +442,85 @@ validator.assetUpdate = async (req, res, next) => {
   }
   next();
 
-}
+},
+
+requestCreate: async (req, res, next) => {
+  const schema = Joi.object({
+    asset_id: Joi.string()
+      .trim()
+      .required()
+      .messages({
+        "string.empty": "Asset ID is required",
+        "any.required": "Asset ID is required"
+      }),
+
+    requested_quantity: Joi.number()
+      .integer()
+      .min(1)
+      .required()
+      .messages({
+        "number.base": "Requested quantity must be a number",
+        "number.min": "Requested quantity must be at least 1",
+        "any.required": "Requested quantity is required"
+      }),
+
+    remarks: Joi.string().allow(null, "").optional(),
+  }).unknown(true);
+
+  const result = schema.validate(req.body, { abortEarly: false });
+
+  if (result.error) {
+    return res
+      .status(200)
+      .send(response.failed(result.error.details.map(e => e.message)));
+  } else {
+    next();
+  }
+},
+
+requestUpdate: async (req, res, next) => {
+  const schema = Joi.object({
+   
+    asset_id: Joi.string()
+      .trim()
+      .required()
+      .messages({
+        "string.empty": "Asset ID is required",
+        "any.required": "Asset ID is required"
+      }),
+
+    requested_quantity: Joi.number()
+      .integer()
+      .min(1)
+      .required()
+      .messages({
+        "number.base": "Requested quantity must be a number",
+        "number.min": "Requested quantity must be at least 1",
+        "any.required": "Requested quantity is required"
+      }),
+
+    request_status: Joi.string()
+      .valid("pending", "accepted", "onhold", "denied")
+      .messages({
+        "any.only": "Invalid request status"
+      }),
+
+    remarks: Joi.string().allow(null, "").optional(),
+
+  }).unknown(true);
+
+  const result = schema.validate(req.body, { abortEarly: false });
+
+  if (result.error) {
+    return res
+      .status(200)
+      .send(response.failed(result.error.details.map(e => e.message)));
+  } else {
+    next();
+  }
+},
+
+
+};
  
 module.exports = validator;

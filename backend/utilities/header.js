@@ -1,7 +1,8 @@
 let header ={
   checkHeader:(req,res,next)=>{
-  
+    
       let headers =req.headers;
+      //console.log(headers);
       if(headers.username=='chendanapriya' && headers.password=='12345678'){
         next();
       }else{

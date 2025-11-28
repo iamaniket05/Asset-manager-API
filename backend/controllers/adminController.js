@@ -251,7 +251,17 @@ update: async (req, res) => {
         }
     },
  
-   
+    dashboardData: async (req, res) => {
+        try {
+            const data = await AdminModel.getDashboardCounts();
+
+            return res.status(200).send(response.successData(data, "Dashboard data loaded"));
+            
+        } catch (err) {
+            console.log("Dashboard Error:", err);
+            return res.status(500).send(response.failed("Failed to load dashboard data"));
+        }
+      },
  
  
  
