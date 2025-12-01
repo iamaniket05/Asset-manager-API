@@ -198,6 +198,11 @@ const AdminModel = {
             returnAssets: qb.select("COUNT(*) AS returned", false)
                 .where("status", "returned")
                 .get("asset_assignments"),
+
+            // 🔥 NEW: get all asset details
+            assetDetails: qb.select(
+                "id, model, name, count, assigned_assets, remaining_assets, description, assetcategory_id, assetsupplier_id, price"
+            ).get("assets"),
         };
 
         const results = await Promise.all(Object.values(queries));
@@ -214,14 +219,15 @@ const AdminModel = {
 
             totalAssign: results[6][0].assign || 0,
             returnAssets: results[7][0].returned || 0,
-        };
 
+            // 🔥 NEW: pass all asset details to frontend
+            assets: results[8] || [],
+        };
     } catch (err) {
         qb.release();
         throw err;
     }
-}
-
+},
 };
  
 module.exports = AdminModel;

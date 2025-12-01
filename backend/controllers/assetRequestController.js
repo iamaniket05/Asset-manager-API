@@ -6,6 +6,7 @@ let moment = require('moment');
 const assetRequestController = {
   async create(req, res) {
     try {
+      console.log(req.body);
       const { asset_id: encAssetId, requested_quantity, remarks } = req.body;
       const encEmployeeId = req.body.employee_id || req.user?.id; 
       if (!encEmployeeId) return res.status(400).send(response.failed('Employee id missing'));
@@ -21,6 +22,7 @@ const assetRequestController = {
         requested_quantity: requested_quantity || 1,
         remarks
       });
+      console.log(result);
 
       return res.status(201).send(response.successData({ id: encrypt_decrypt.encrypt(result.insertId) }, 'Request created successfully'));
     } catch (err) {
